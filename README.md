@@ -37,7 +37,7 @@ Create an application that creates/retrieves airline emission data stored in Sal
 - [Trailhead - Apex REST Callouts](https://trailhead.salesforce.com/content/learn/modules/apex_integration_services/apex_integration_rest_callouts)
 - [Apex Recipies - Callout Examples](https://github.com/trailheadapps/apex-recipes/tree/main)
 - [Invoking Callouts Using Apex](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_callouts.htm)
--  [Trailhead - Git and GitHub Basics](https://trailhead.salesforce.com/content/learn/modules/git-and-git-hub-basics)
+- [Trailhead - Git and GitHub Basics](https://trailhead.salesforce.com/content/learn/modules/git-and-git-hub-basics)
 - [Setup GitHub Repo and SFDX Project](https://youtu.be/SHGf_9NN4Sg)
 
 ## Notes
