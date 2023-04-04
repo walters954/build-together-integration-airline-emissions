@@ -15,8 +15,8 @@ Create an application that creates/retrieves airline emission data stored in Sal
 
 ## Project Requirements  
 - Callout to Carbon Interface API
--- Create flight estimate emission
--- Pull all estimated  emissions
+  - Create flight estimate emission
+  - Pull all estimated  emissions
 - Process API responses into a wrapper class and Salesforce objects
 - Create automation on Salesforce object creation to create flight estimates via the API
 
