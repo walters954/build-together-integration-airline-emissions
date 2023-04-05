@@ -7,7 +7,7 @@ A month-long project you build on a team of 2-3 with other learning Salesforce d
 Create an application that creates/retrieves airline emission data stored in Salesforce using [Carbon Interface](https://docs.carboninterface.com/#/) API.
 - Understanding of Salesforce integration
 - Work with Salesforce APIs, including REST and SOAP
-- Practical knowledge of Salesforce integration tools, such as Apex, Visualforce, and the Salesforce Connector
+- Practical knowledge of Salesforce integration tools, such as Apex, LWC, and the Salesforce Connector
 - Best practices for Salesforce integration, including error handling, testing, and deployment
 - Integration with third-party applications, such as ERPs and marketing automation tools
 - Real-world scenario-based learning
