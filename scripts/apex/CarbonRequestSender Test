@@ -1,8 +1,12 @@
 // parameters: numPassengers, airport1, airport2, distanceUnit
 // FRA FCO BCN MUC CDG LHR MAD VIE BER WAW
 // MIA DEN ATL DFW LAX ORD MCO SEA JFK BOS
-CarbonRequestSender.prepareRequest(2, 'VIE', 'PHL', 'mi');
+CarbonRequestSender.prepareRequest(4, 'DIA', 'SEA', 'mi');
 
+
+
+
+// Idea for upddated prepareRequest method -- add additional parameters/variables
 // parameters: numPassengers, airportStart, airportLayover, airportFinal, roundtrip, distanceUnit
 // CarbonRequestSender test = new CarbonRequestSender(2, 'PHL', 'ORD', 'SEA', TRUE, 'mi');
 // CarbonRequestSender test = new CarbonRequestSender(2, 'PHL', 'ORD', 'SEA', FALSE, 'mi');

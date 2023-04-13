@@ -1,7 +1,8 @@
 //
 // Code by Neil Hohmann
 // April 2023
-// Build Together Integration 4 - Airline Emissions
+// Build Together Integration 4
+// Carbon Interface API - Airline Emissions
 // Team 2: team-EMEA
 //
 
@@ -40,7 +41,7 @@ public class CarbonRequestSender {
         req.setBody(requestBody);
 
         // Print the request body to the debug log
-        System.debug('Created JSON body: ' + requestBody);
+        //System.debug('Created JSON body: ' + requestBody);
          
         // Create HTTP & HttpResponse objects and send the request
         Http httpCallout = new Http();
@@ -52,18 +53,23 @@ public class CarbonRequestSender {
 
     public static void processResponse(HttpResponse carbonResponse){
         
-        System.debug(carbonResponse.getBody());
+        //System.debug(carbonResponse.getBody());
 
         // Deserialize the response using the parse method of the CarbonResponseWrapper class
         CarbonResponseWrapper carbonBodyResponse = CarbonResponseWrapper.parse(carbonResponse.getBody());
         
         // Print data to output console
-        System.debug('>>>>> Request sent/recieved: ' + carbonBodyResponse.data.attributes.estimated_at);
+        String airport1 = carbonBodyResponse.data.attributes.legs.get(0).departure_airport;
+        String airport2 = carbonBodyResponse.data.attributes.legs.get(0).destination_airport;
+
+        System.debug('>>>>> Carbon Interface API - Airline Emissions');
+        System.debug('>>>>> Request Date/Time: ' + carbonBodyResponse.data.attributes.estimated_at);
         System.debug('>>>>> Number of Passengers: ' + carbonBodyResponse.data.attributes.passengers);
         // Idea: use loop to loop over legs (using .size() and give dep/des airport codes.
-        System.debug('>>>>> Departure airport: '    + carbonBodyResponse.data.attributes.legs.get(0).departure_airport);
-        System.debug('>>>>> Destination airport: '  + carbonBodyResponse.data.attributes.legs.get(0).destination_airport);
-        System.debug('>>>>> Total distance (' + carbonBodyResponse.data.attributes.distance_unit + '): '  + carbonBodyResponse.data.attributes.distance_value);
+        System.debug('>>>>> Number of legs: ' + carbonBodyResponse.data.attributes.legs.size());
+        System.debug('>>>>> ' + airport1 + ' > ' + airport2);
+        System.debug('>>>>> ' + airport2 + ' > ' + airport1);
+        System.debug('>>>>> Total distance (' + carbonBodyResponse.data.attributes.distance_unit + '): ' + carbonBodyResponse.data.attributes.distance_value);
         System.debug('>>>>> CO2e lb: ' + carbonBodyResponse.data.attributes.carbon_lb);
         System.debug('>>>>> CO2e kg: ' + carbonBodyResponse.data.attributes.carbon_kg);
         System.debug('>>>>> CO2e mt: ' + carbonBodyResponse.data.attributes.carbon_mt);
