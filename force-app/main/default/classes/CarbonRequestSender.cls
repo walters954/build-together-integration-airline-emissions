@@ -41,7 +41,7 @@ public class CarbonRequestSender {
         req.setBody(requestBody);
 
         // Print the request body to the debug log
-        //System.debug('Created JSON body: ' + requestBody);
+        System.debug('Created JSON body: ' + requestBody);
          
         // Create HTTP & HttpResponse objects and send the request
         Http httpCallout = new Http();
@@ -53,7 +53,8 @@ public class CarbonRequestSender {
 
     public static void processResponse(HttpResponse carbonResponse){
         
-        //System.debug(carbonResponse.getBody());
+        // Print response to the debug log
+        System.debug(carbonResponse.getBody());
 
         // Deserialize the response using the parse method of the CarbonResponseWrapper class
         CarbonResponseWrapper carbonBodyResponse = CarbonResponseWrapper.parse(carbonResponse.getBody());
@@ -61,9 +62,10 @@ public class CarbonRequestSender {
         // Print data to output console
         String airport1 = carbonBodyResponse.data.attributes.legs.get(0).departure_airport;
         String airport2 = carbonBodyResponse.data.attributes.legs.get(0).destination_airport;
+        String dateProcessed = carbonBodyResponse.data.attributes.estimated_at;
 
         System.debug('>>>>> Carbon Interface API - Airline Emissions');
-        System.debug('>>>>> Request Date/Time: ' + carbonBodyResponse.data.attributes.estimated_at);
+        System.debug('>>>>> Request Date/Time: ' + Datetime.valueOf(dateProcessed.replace('T',' ')).addHours(2).format());
         System.debug('>>>>> Number of Passengers: ' + carbonBodyResponse.data.attributes.passengers);
         // Idea: use loop to loop over legs (using .size() and give dep/des airport codes.
         System.debug('>>>>> Number of legs: ' + carbonBodyResponse.data.attributes.legs.size());
