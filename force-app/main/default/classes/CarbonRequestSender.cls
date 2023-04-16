@@ -1,13 +1,13 @@
 //
-// Code by Neil Hohmann
 // April 2023
 // Build Together Integration 4
 // Carbon Interface API - Airline Emissions
 // Team 2: team-EMEA
-//
+// 
 
 public class CarbonRequestSender {
-    static List<String> airportLegs = new List<String>(); // to display individual legs (PHL > SEA) with response data
+    static List<String> displayLegs = new List<String>(); // used when displaying flight/emission data
+    static final String TOKEN = '3jeEa9IauqaGb0ZDTsxw';
 
     public static void prepareRequest(Integer numPassengers, List<String> airports, Boolean roundtrip, String distanceUnit){
         CarbonBodyWrapper wrapper = new CarbonBodyWrapper();
@@ -21,31 +21,30 @@ public class CarbonRequestSender {
     public static List<CarbonBodyWrapper.Leg> processLegs(List<String> airports, Boolean roundtrip){
         // Check for roundtrip & add airport codes accordingly
         if(roundtrip){
-            List<String> clone = airports.clone();
-            Integer n = airports.size();
-            for(Integer i=n-2; i>=0; i--){
-                airports.add(clone.get(i));
+            // Adds return airport codes to airports[]
+            // ['PHL', 'ORD', 'SEA'] >>> ['PHL', 'ORD', 'SEA', 'ORD', 'PHL']
+            for(Integer i=airports.size()-2; i>=0; i--){
+                airports.add(airports.get(i));
             }
         }
-        // Create each leg of journey (including return trip)
+        // Creates each leg of journey (including any return trip)
         List<CarbonBodyWrapper.Leg> legs = new List<CarbonBodyWrapper.Leg>();
         for(Integer i=0;i<airports.size()-1;i++){
             //create leg
             CarbonBodyWrapper.Leg leg = new CarbonBodyWrapper.Leg();
-            leg.departure_airport = airports.get(i);
+            leg.departure_airport   = airports.get(i);
             leg.destination_airport = airports.get(i+1);
             legs.add(leg);
-            //add airport leg (eg, PHL > ORD) to airportLegs
-            airportLegs.add(airports.get(i) + ' > ' + airports.get(i+1));
+            //add airport leg (eg, 'PHL > ORD') to displayLegs[] to display later
+            displayLegs.add(airports.get(i) + ' > ' + airports.get(i+1));
         }
-        System.debug('>>>>> Legs: ' + airportLegs);
         return legs;
     }
 
     public static void sendRequest(CarbonBodyWrapper wrapper) { 
         HttpRequest req = new HttpRequest();
         req.setEndpoint('https://www.carboninterface.com/api/v1/estimates');
-        req.setHeader ('Authorization', 'Bearer 3jeEa9IauqaGb0ZDTsxw');
+        req.setHeader ('Authorization', 'Bearer ' + TOKEN);
         req.setMethod ('POST');
         req.setHeader ('Content-Type', 'application/json');
         
@@ -75,18 +74,17 @@ public class CarbonRequestSender {
         // Print data to output console
         String airport1 = carbonBodyResponse.data.attributes.legs.get(0).departure_airport;
         String airport2 = carbonBodyResponse.data.attributes.legs.get(0).destination_airport;
-        Integer numlegs = carbonBodyResponse.data.attributes.legs.size();
-        String dateProcessed = carbonBodyResponse.data.attributes.estimated_at;
+        String dateRun = carbonBodyResponse.data.attributes.estimated_at;
+        String distanceUnit = carbonBodyResponse.data.attributes.distance_unit;
 
         System.debug('>>>>> Carbon Interface API - Airline Emissions');
-        System.debug('>>>>> Request Date/Time: ' + Datetime.valueOf(dateProcessed.replace('T',' ')).addHours(2).format());
+        System.debug('>>>>> Request Date/Time: ' + Datetime.valueOf(dateRun.replace('T',' ')).addHours(2).format());
         System.debug('>>>>> Number of Passengers: ' + carbonBodyResponse.data.attributes.passengers);
-        // Idea: use loop to loop over legs (using .size() and give dep/des airport codes.
-        System.debug('>>>>> Number of legs: ' + numLegs);
-        for(String airportLeg : airportLegs){
-            System.debug(airportLeg);
+        System.debug('>>>>> Number of legs: ' + carbonBodyResponse.data.attributes.legs.size());
+        for(String leg : displayLegs){
+            System.debug('>>>>> ' + leg);
         }
-        System.debug('>>>>> Total distance (' + carbonBodyResponse.data.attributes.distance_unit + '): ' + carbonBodyResponse.data.attributes.distance_value);
+        System.debug('>>>>> Total distance (' + distanceUnit + '): ' + carbonBodyResponse.data.attributes.distance_value);
         System.debug('>>>>> CO2e lb: ' + carbonBodyResponse.data.attributes.carbon_lb);
         System.debug('>>>>> CO2e kg: ' + carbonBodyResponse.data.attributes.carbon_kg);
         System.debug('>>>>> CO2e mt: ' + carbonBodyResponse.data.attributes.carbon_mt);
