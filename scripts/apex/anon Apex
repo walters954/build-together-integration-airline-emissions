@@ -1,0 +1,13 @@
+List<String> airports = new List<String>{'PHL', 'SEA'};
+System.debug('airports before: ' + airports);
+//List<String> clone = airports.clone();
+//System.debug('clone before: ' + clone);
+Integer numAirports = airports.size();
+System.debug('Last element in list: ' + airports.get(airports.size()-1));
+for(Integer i=numAirports-2; i>=0; i--){
+    airports.add(airports.get(i));
+}
+System.debug('numAiports: ' + numAirports);
+//System.debug('clone after: ' + clone);
+System.debug('airports after: ' + airports);
+
