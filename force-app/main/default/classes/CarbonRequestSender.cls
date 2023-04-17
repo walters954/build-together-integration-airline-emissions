@@ -6,15 +6,15 @@
 // 
 
 public class CarbonRequestSender {
-    static List<String> displayLegs = new List<String>(); // used when displaying flight/emission data
+    static List<String> displayLegs = new List<String>(); // used to display flight legs w/results
     static final String TOKEN = '3jeEa9IauqaGb0ZDTsxw';
 
     public static void prepareRequest(Integer numPassengers, List<String> airports, Boolean roundtrip, String distanceUnit){
         CarbonBodyWrapper wrapper = new CarbonBodyWrapper();
-        wrapper.type = 'flight';
-        wrapper.passengers = numPassengers;
+        wrapper.type          = 'flight';
+        wrapper.passengers    = numPassengers;
         wrapper.distance_unit = distanceUnit;
-        wrapper.legs = processLegs(airports, roundtrip);
+        wrapper.legs          = processLegs(airports, roundtrip);
         sendRequest(wrapper);
     }
 
@@ -35,7 +35,7 @@ public class CarbonRequestSender {
             leg.departure_airport   = airports.get(i);
             leg.destination_airport = airports.get(i+1);
             legs.add(leg);
-            //add airport leg (eg, 'PHL > ORD') to displayLegs[] to display later
+            //add airport leg (eg, 'PHL > ORD') to displayLegs[]
             displayLegs.add(airports.get(i) + ' > ' + airports.get(i+1));
         }
         return legs;
@@ -52,7 +52,6 @@ public class CarbonRequestSender {
         String requestBody = JSON.serialize(wrapper);
         req.setBody(requestBody);
 
-        // Print the request body to the debug log
         System.debug('Created JSON body: ' + requestBody);
          
         // Create HTTP & HttpResponse objects and send the request
@@ -65,22 +64,19 @@ public class CarbonRequestSender {
 
     public static void processResponse(HttpResponse carbonResponse){
         
-        // Print response to the debug log
         System.debug(carbonResponse.getBody());
 
         // Deserialize the response using the parse method of the CarbonResponseWrapper class
         CarbonResponseWrapper carbonBodyResponse = CarbonResponseWrapper.parse(carbonResponse.getBody());
         
         // Print data to output console
-        String airport1 = carbonBodyResponse.data.attributes.legs.get(0).departure_airport;
-        String airport2 = carbonBodyResponse.data.attributes.legs.get(0).destination_airport;
-        String dateRun = carbonBodyResponse.data.attributes.estimated_at;
+        String dateRun      = carbonBodyResponse.data.attributes.estimated_at;
         String distanceUnit = carbonBodyResponse.data.attributes.distance_unit;
 
-        System.debug('>>>>> Carbon Interface API - Airline Emissions');
-        System.debug('>>>>> Request Date/Time: ' + Datetime.valueOf(dateRun.replace('T',' ')).addHours(2).format());
+        System.debug('>>>>> Carbon Interface API - Flight Emission Estimates');
+        System.debug('>>>>> Request Date/Time: '    + Datetime.valueOf(dateRun.replace('T',' ')).addHours(2).format());
         System.debug('>>>>> Number of Passengers: ' + carbonBodyResponse.data.attributes.passengers);
-        System.debug('>>>>> Number of legs: ' + carbonBodyResponse.data.attributes.legs.size());
+        System.debug('>>>>> Number of legs: '       + carbonBodyResponse.data.attributes.legs.size());
         for(String leg : displayLegs){
             System.debug('>>>>> ' + leg);
         }
