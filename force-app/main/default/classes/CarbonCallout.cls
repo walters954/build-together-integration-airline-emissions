@@ -1,5 +1,4 @@
 public with sharing class CarbonCallout {
-    public String orderId = 'Id1234';
 
     private static final String CARBON_URL = 'https://www.carboninterface.com/api/v1/estimates';
     private static final String APIKEY = 'o9OkXzJnFSplmvgfEwCZw';
