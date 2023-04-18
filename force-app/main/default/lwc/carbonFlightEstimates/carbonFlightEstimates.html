@@ -4,12 +4,12 @@
             <template for:each={flightEstimatesWrapperData} for:item="flightEstimateData">
                 <div key={flightEstimateData.id}>
                     <p>{flightEstimateData.type}</p>
-                    <p>{flightEstimateData.attributes.distanceValue}</p> 
-                    <p>{flightEstimateData.attributes.distanceUnit}</p>
-                    <p>{flightEstimateData.attributes.carbonG} g</p>
-                    <p>{flightEstimateData.attributes.carbonKg} kg</p>
-                    <p>{flightEstimateData.attributes.carbonLb} lb</p>
-                    <p>{flightEstimateData.attributes.carbonMt} mt</p>
+                    <p>{flightEstimateData.attributes.distance_value}</p> 
+                    <p>{flightEstimateData.attributes.distance_unit}</p>
+                    <p>{flightEstimateData.attributes.carbon_g} g</p>
+                    <p>{flightEstimateData.attributes.carbon_kg} kg</p>
+                    <p>{flightEstimateData.attributes.carbon_lb} lb</p>
+                    <p>{flightEstimateData.attributes.carbon_mt} mt</p>
                 </div>
             </template>
         </template>

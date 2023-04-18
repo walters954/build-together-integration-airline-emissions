@@ -41,13 +41,13 @@ public with sharing class CarbonCallout {
         flightEstimateData.attributes = flightEstimates.data.attributes;
         flightEstimateData.attributes.passengers = flightEstimates.data.attributes.passengers;
         flightEstimateData.attributes.legs = flightEstimates.data.attributes.legs;
-        flightEstimateData.attributes.distanceValue = flightEstimates.data.attributes.distanceValue;
-        flightEstimateData.attributes.distanceUnit = flightEstimates.data.attributes.distanceUnit;
-        flightEstimateData.attributes.estimatedAt = flightEstimates.data.attributes.estimatedAt;
-        flightEstimateData.attributes.carbonG = flightEstimates.data.attributes.carbonG;
-        flightEstimateData.attributes.carbonLb = flightEstimates.data.attributes.carbonLb;
-        flightEstimateData.attributes.carbonKg = flightEstimates.data.attributes.carbonKg;        
-        flightEstimateData.attributes.carbonMt = flightEstimates.data.attributes.carbonMt;
+        flightEstimateData.attributes.distance_value = flightEstimates.data.attributes.distance_value;
+        flightEstimateData.attributes.distance_unit = flightEstimates.data.attributes.distance_unit;
+        flightEstimateData.attributes.estimated_at = flightEstimates.data.attributes.estimated_at;
+        flightEstimateData.attributes.carbon_g = flightEstimates.data.attributes.carbon_g;
+        flightEstimateData.attributes.carbon_lb = flightEstimates.data.attributes.carbon_lb;
+        flightEstimateData.attributes.carbon_kg = flightEstimates.data.attributes.carbon_kg;        
+        flightEstimateData.attributes.carbon_mt = flightEstimates.data.attributes.carbon_mt;
         
         flightEstimatesWrapperData.add(flightEstimateData);
         //System.debug('flightEstimatesWrapperData: ' + flightEstimatesWrapperData);
