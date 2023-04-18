@@ -20,6 +20,28 @@ Create an application that creates/retrieves airline emission data stored in Sal
 - Process API responses into a wrapper class and Salesforce objects
 - Create automation on Salesforce object creation to create flight estimates via the API
 
+## BT-5: Week 1
+- Overview: Initial Callout Objectives
+  - Setup VSC, SFDX, & Playground Org[DONE]
+  - Create a branch or fork of the repo[DONE]
+  - Signup & Create API key for Carbon Interface[DONE]
+  - Setup API callout in Salesforce[DONE]
+- Tips
+  - Review API documentation for Carbon Interface[DONE]
+  - Use Postman or another integration tool to do test callout[DONE]
+  - https://docs.carboninterface.com/#/?id=flight 
+
+BT-5: Week 2
+- Overview: Apex Integration Objectives
+  - Do callout inside of apex class
+  - Parse integration payload
+  - Create Salesforce objects to store the data
+    - Flight Carbon Estimate
+    - Leg
+- Tips
+  - Review wrapper classes and how they can be used
+  - Research ways to automatically map fields
+
 ## Getting Started
 - Clone this repository onto your local computer and open the folder in Visual Studio Code
 - Create a branch from the main branch for your team or individually

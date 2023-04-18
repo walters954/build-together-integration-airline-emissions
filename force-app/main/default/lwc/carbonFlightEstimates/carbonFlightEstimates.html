@@ -1,0 +1,20 @@
+<template>
+    <lightning-card title="Flight Estimates">
+        <template if:true={flightEstimatesWrapperData}>
+            <template for:each={flightEstimatesWrapperData} for:item="flightEstimateData">
+                <div key={flightEstimateData.id}>
+                    <p>{flightEstimateData.type}</p>
+                    <p>{flightEstimateData.attributes.distanceValue}</p> 
+                    <p>{flightEstimateData.attributes.distanceUnit}</p>
+                    <p>{flightEstimateData.attributes.carbonG} g</p>
+                    <p>{flightEstimateData.attributes.carbonKg} kg</p>
+                    <p>{flightEstimateData.attributes.carbonLb} lb</p>
+                    <p>{flightEstimateData.attributes.carbonMt} mt</p>
+                </div>
+            </template>
+        </template>
+        <template if:false={flightEstimatesWrapperData}>
+            <p>No flight estimates available at this time</p>
+        </template>
+    </lightning-card>
+</template>
