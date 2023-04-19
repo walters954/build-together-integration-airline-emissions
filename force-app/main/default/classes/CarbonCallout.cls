@@ -1,25 +1,33 @@
 public with sharing class CarbonCallout {
-    public static void makeAPICallout() {
-        // Create a new HTTP object
+
+    static String TOKEN = 'fghfjfkfl';
+
+    public static void callout(){
+        System.debug('CarbonCallout callout()');
         Http http = new Http();
-        
-        // Create a new HTTP request
         HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://www.carboninterface.com/api/v1');
-        request.setMethod('GET');
+        request.setEndpoint('https://www.carboninterface.com/api/v1/estimates');
+        request.setMethod('POST');
+        request.setHeader('Authorization', 'Bearer ' + TOKEN);
         request.setHeader('Content-Type', 'application/json');
-        
-        // Send the HTTP request and receive the response
+
+        Map<String,Object> data = new Map<String,Object>();
+        data.put('type','flight');
+        data.put('passengers',2);
+        data.put('distance_unit','mi');
+        Map<String,Object> leg1 = new Map<String,Object>();
+        leg1.put('departure_airport', 'VIE');
+        leg1.put('destination_airport', 'OSL');
+        Map<String,Object> leg2 = new Map<String,Object>();
+        leg2.put('departure_airport', 'OSL');
+        leg2.put('destination_airport', 'VIE');
+        data.put('legs', new List<Object>{leg1,leg2});
+        System.debug();
+
+        String JSONBody = JSON.serialize(data);
+        request.setBody(JSONBody);
         HttpResponse response = http.send(request);
-        
-        // Handle the response data
-        if (response.getStatusCode() == 200) {
-            String responseBody = response.getBody();
-            // Do something with the response body, such as parsing it with JSON.deserialize()
-        } else {
-            // Handle the error response
-            String errorMessage = 'API request failed with status code ' + response.getStatusCode() + ': ' + response.getStatus();
-            // Handle the error as appropriate, such as logging it or displaying an error message to the user
-        }
+        System.debug(response.getStatusCode());
+        System.debug(response.getBody());
     }
 }
