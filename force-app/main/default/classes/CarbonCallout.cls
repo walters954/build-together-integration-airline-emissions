@@ -28,7 +28,7 @@ public with sharing class CarbonCallout {
         System.debug();
 
 
-        String JSONbody = JSON.serialize(data);
+        String JSONBody = JSON.serialize(data);
         request.setBody(JSONBody);
         HttpResponse response = http.send(request);
         System.debug(response.getStatusCode());
