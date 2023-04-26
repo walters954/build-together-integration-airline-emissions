@@ -5,42 +5,72 @@
 // Team 2: team-EMEA
 // 
 
-public class CarbonRequestSender {
-    static List<String> displayLegs = new List<String>(); // used to display flight legs w/results
+global class CarbonRequestSender {
+    static List<String> airportCodes = new List<String>();
+    static Boolean returnTrip;
+    static String displayLegs = ''; // displays legs in page layout (UI)
     static final String TOKEN = '3jeEa9IauqaGb0ZDTsxw';
 
-    public static void prepareRequest(Integer numPassengers, List<String> airports, Boolean roundtrip, String distanceUnit){
-        CarbonBodyWrapper wrapper = new CarbonBodyWrapper();
-        wrapper.type          = 'flight';
-        wrapper.passengers    = numPassengers;
-        wrapper.distance_unit = distanceUnit;
-        wrapper.legs          = processLegs(airports, roundtrip);
-        sendRequest(wrapper);
+    @InvocableMethod(label='sendCarbonInterfaceRequest' callout=true)
+    public static void prepareRequest(List<makeCarbonInterfaceRequest> requests){
+
+        for (makeCarbonInterfaceRequest request : requests){
+            airportCodes = request.airports;
+            returnTrip   = request.roundtrip;
+            CarbonBodyWrapper wrapper = new CarbonBodyWrapper();
+            wrapper.type           = 'flight';
+            wrapper.passengers     = request.passengers.intValue();
+            wrapper.distance_unit  = 'mi';
+            wrapper.legs           = processLegs(airportCodes, returnTrip);
+
+            sendRequest(wrapper);
+
+        }
     }
 
     public static List<CarbonBodyWrapper.Leg> processLegs(List<String> airports, Boolean roundtrip){
-        // Check for roundtrip & add airport codes accordingly
+        List<CarbonBodyWrapper.Leg> legs = new List<CarbonBodyWrapper.Leg>();
+
+        // Creates each outbound leg
+        for(Integer i=0;i<airports.size()-1;i++){
+            constructLeg(airports, legs, i, i+1);
+        }
+        // Creates each return leg
         if(roundtrip){
-            // Adds return airport codes to airports[]
-            // ['PHL', 'ORD', 'SEA'] >>> ['PHL', 'ORD', 'SEA', 'ORD', 'PHL']
-            for(Integer i=airports.size()-2; i>=0; i--){
-                airports.add(airports.get(i));
+            for(Integer i=airports.size()-1; i>0; i--){
+                constructLeg(airports, legs, i, i-1);
             }
         }
-        // Creates each leg of journey (including any return trip)
-        List<CarbonBodyWrapper.Leg> legs = new List<CarbonBodyWrapper.Leg>();
-        for(Integer i=0;i<airports.size()-1;i++){
-            //create leg
-            CarbonBodyWrapper.Leg leg = new CarbonBodyWrapper.Leg();
-            leg.departure_airport   = airports.get(i);
-            leg.destination_airport = airports.get(i+1);
-            legs.add(leg);
-            //add airport leg (eg, 'PHL > ORD') to displayLegs[]
-            displayLegs.add(airports.get(i) + ' > ' + airports.get(i+1));
+        
+        // Creates string that will display legs in UI
+        for (Integer i=0; i<legs.size(); i++){
+            displayLegs += legs.get(i).departure_airport + ' > ' + legs.get(i).destination_airport;
+            if (i != legs.size() -1){
+                displayLegs += '\n';
+            }
         }
         return legs;
     }
 
+    global class makeCarbonInterfaceRequest {
+        @InvocableVariable (required=true)
+        global Decimal passengers;
+
+        @InvocableVariable (required=true)
+        global List<String> airports;
+
+        @InvocableVariable (required=true)
+        global Boolean roundtrip;
+    }
+
+
+    public static void constructLeg(List<String> airports, List<CarbonBodyWrapper.Leg> legs, Integer depAirport, Integer destAirport){
+        CarbonBodyWrapper.Leg leg = new CarbonBodyWrapper.Leg();
+        leg.departure_airport   = airports.get(depAirport);
+        leg.destination_airport = airports.get(destAirport);
+        legs.add(leg);
+    }
+    
     public static void sendRequest(CarbonBodyWrapper wrapper) { 
         HttpRequest req = new HttpRequest();
         req.setEndpoint('https://www.carboninterface.com/api/v1/estimates');
@@ -64,7 +94,7 @@ public class CarbonRequestSender {
 
     public static void processResponse(HttpResponse carbonResponse){
         
-        System.debug(carbonResponse.getBody());
+        System.debug('carbonResponse.getBody(): ' + carbonResponse.getBody());
 
         // Deserialize the response using the parse method of the CarbonResponseWrapper class
         CarbonResponseWrapper carbonBodyResponse = CarbonResponseWrapper.parse(carbonResponse.getBody());
@@ -74,15 +104,16 @@ public class CarbonRequestSender {
         String distanceUnit = carbonBodyResponse.data.attributes.distance_unit;
 
         System.debug('>>>>> Carbon Interface API - Flight Emission Estimates');
+        System.debug('>>>>> Transaction Id: '       + carbonBodyResponse.data.id);
         System.debug('>>>>> Request Date/Time: '    + Datetime.valueOf(dateRun.replace('T',' ')).addHours(2).format());
         System.debug('>>>>> Number of Passengers: ' + carbonBodyResponse.data.attributes.passengers);
         System.debug('>>>>> Number of legs: '       + carbonBodyResponse.data.attributes.legs.size());
-        for(String leg : displayLegs){
-            System.debug('>>>>> ' + leg);
-        }
+        System.debug('>>>>> Legs: '                 + displayLegs);
         System.debug('>>>>> Total distance (' + distanceUnit + '): ' + carbonBodyResponse.data.attributes.distance_value);
         System.debug('>>>>> CO2e lb: ' + carbonBodyResponse.data.attributes.carbon_lb);
         System.debug('>>>>> CO2e kg: ' + carbonBodyResponse.data.attributes.carbon_kg);
         System.debug('>>>>> CO2e mt: ' + carbonBodyResponse.data.attributes.carbon_mt);
+
+        AirlineEmissionsTrip.createAteeObject(airportCodes, displayLegs, returnTrip, carbonBodyResponse);
     }
 }

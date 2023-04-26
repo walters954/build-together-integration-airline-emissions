@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LayoverAndNotNonStop</fullName>
+    <active>true</active>
+    <description>Ensures that a layover airport is selected when the Non-Stop checkbox is NOT checked.</description>
+    <errorConditionFormula>Non_Stop_Flight__c == false &amp;&amp; TEXT( Layover_Airport__c )== &apos;&apos;</errorConditionFormula>
+    <errorDisplayField>CO2e_g__c</errorDisplayField>
+    <errorMessage>You must select a Layover Airport when the Non-Stop checkbox is NOT checked.</errorMessage>
+</ValidationRule>

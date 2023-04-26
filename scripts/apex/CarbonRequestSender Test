@@ -1,5 +1,5 @@
 // parameters: numPassengers, airports, roundtrip, distanceUnit
 // INT'L: FRA FCO BCN MUC CDG LHR MAD VIE BER WAW PEK DEL
 // DOMESTIC: MIA DEN ATL DFW LAX ORD MCO SEA JFK BOS SFO
-List<String> airports = new List<String>{'SEA', 'ORD', 'PHL'};
-CarbonRequestSender.prepareRequest(4, airports, TRUE, 'mi');
+List<String> airports = new List<String>{'SFO', 'ORD', 'JFK'};
+CarbonRequestSender.prepareRequest(2, airports, TRUE); 

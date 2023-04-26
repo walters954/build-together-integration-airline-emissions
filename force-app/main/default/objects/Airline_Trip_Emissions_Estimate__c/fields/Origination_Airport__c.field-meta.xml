@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Origination_Airport__c</fullName>
+    <description>Contains the 3-letter airport code of the originatin (first departure) airport.</description>
+    <externalId>false</externalId>
+    <label>Origination Airport</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>IATA_Airport_Codes</valueSetName>
+    </valueSet>
+</CustomField>

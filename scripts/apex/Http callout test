@@ -1,0 +1,40 @@
+Http http = new Http();
+HttpRequest request = new HttpRequest();
+// flight variables
+Integer numPassengers  = 2;
+String airport1        = 'FRA'; // FRA FCO BCN MUC CDG LHR MAD VIE BER WAW
+String airport2        = 'DEN'; // MIA DEN ATL DFW LAX ORD MCO SEA JFK BOS
+String distanceUnit    = 'mi';  // mi km 
+// Create JSON string - roundtrip between airport1 & airport2
+String jsonBody =   '{"type": "flight","passengers": '   + numPassengers + 
+                    ',"legs": [ {"departure_airport": "' + airport1 + 
+                    '", "destination_airport": "'        + airport2 +
+                    '"}, {"departure_airport": "'        + airport2 + 
+                    '", "destination_airport": "'        + airport1 + 
+                    '"}], "distance_unit": "'            + distanceUnit + 
+                    '"}';
+
+request.setEndpoint('https://www.carboninterface.com/api/v1/estimates');
+request.setMethod('POST');
+request.setHeader('Authorization', 'Bearer 3jeEa9IauqaGb0ZDTsxw');
+request.setHeader('Content-Type', 'application/json');
+request.setBody(jsonBody);
+
+// Initiate callout (send request) and assign to response
+HttpResponse response = http.send(request);
+
+// print response (JSON body) to debug
+System.debug(response.getBody());
+    
+// parse response by digging into it, layer by layer
+Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+Map<String, Object> data = (Map<String, Object>) results.get('data');
+System.debug('>>> Data: ' + data);
+Map<String, Object> attributes = (Map<String, Object>) data.get('attributes');
+System.debug('>>> Attributes: ' + attributes);
+for (String attribute : attributes.keySet()){
+    System.debug('>>>>> ' + attribute + ': ' + attributes.get(attribute));
+}
+
+System.debug('Distance (' + distanceUnit + '): ' + attributes.get('distance_value'));
+System.debug('CO2e (mt): ' + attributes.get('carbon_mt'));
