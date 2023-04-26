@@ -8,4 +8,4 @@
 //System.debug('Hello World!');
 //System.debug('My name is ' + tempvar);
 
-CarbonCallout.callout();
+CarbonCallout.doCallout3();
