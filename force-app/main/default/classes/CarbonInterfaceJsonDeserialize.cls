@@ -1,3 +1,4 @@
+/* V2: Successful deserialize after many hours of troubleshooting -- issue was with integer/double/decimal. Now have to complete creating sObject. */ 
 public class CarbonInterfaceJsonDeserialize {
     
     public Data data;
