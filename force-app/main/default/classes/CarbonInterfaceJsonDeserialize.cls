@@ -1,4 +1,4 @@
-/* V2: Successful deserialize after many hours of troubleshooting -- issue was with integer/double/decimal. Now have to complete creating sObject. */ 
+/* V3: Successful deserialize after many hours of troubleshooting -- issue was with integer/double/decimal. Now have to complete creating sObject. */ 
 public class CarbonInterfaceJsonDeserialize {
     
     public Data data;
@@ -21,10 +21,10 @@ public class CarbonInterfaceJsonDeserialize {
         public Double distance_value; //Initially this was decimal, was not working.
     }
 
-    	public class Leg {
-		public String departure_airport;
-		public String destination_airport;
-	}
+    public class Leg {
+        public String departure_airport;
+        public String destination_airport;
+    }
 
 /*
     public static CarbonInterfaceJsonDeserialize parse(String abc) {
@@ -38,8 +38,7 @@ public class CarbonInterfaceJsonDeserialize {
          CarbonInterfaceJsonDeserialize c = (CarbonInterfaceJsonDeserialize) System.JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);
          return c;
     }
-*/
-    
+*/  
    
    public static CarbonInterfaceJsonDeserialize parse(String abc) {
         //Check if JSON Response is successfully passed in.       
@@ -55,19 +54,41 @@ public class CarbonInterfaceJsonDeserialize {
        
         return (CarbonInterfaceJsonDeserialize) System.JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);  
     }
-    
+
+/*
+//V3.2 Populate sObject.
+public static CarbonFlightEstimate__c populateRecord(CarbonInterfaceJsonDeserialize){
+    CarbonInterfaceJsonDeserialize c = CarbonInterfaceJsonDeserialize.parse();
+
+    CarbonFlightEstimate__c cfe = new CarbonFlightEstimate__c(
+    carbon_g__c = c.data.attributes.carbon_g,
+    carbon_lb__c = c.data.attributes.carbon_lb,
+    carbon_kg__c = c.data.attributes.carbon_kg,
+    carbon_mt__c = c.data.attributes.carbon_mt,
+    distance_value__c = c.data.attributes.distance_value        
+    );
+
+    System.debug('New CarbonFlightEstimate Record populated with deserialized values: ' + cfe);
+    return cfe; 
+}  
+*/
+
 /* 
-//Finish building sObject.
-    public static CarbonFlightEstimate__c createRecord(){
+//V3.1 Populate sObject.
+    public static CarbonFlightEstimate__c populateRecord(){
+        CarbonInterfaceJsonDeserialize c = CarbonInterfaceJsonDeserialize.parse();
+
 		CarbonFlightEstimate__c cfe = new CarbonFlightEstimate__c;
-        cfe.carbon_g__c = deserializedResponse.data.attributes.carbon_g;
-        cfe.carbon_lb__c = deserializedResponse.data.attributes.carbon_lb;
-        cfe.carbon_kg__c = deserializedResponse.data.attributes.carbon_kg;
-        cfe.carbon_mt__c = deserializedResponse.data.attributes.carbon_mt;
-        cfe.distance_value__c = deserializedResponse.data.attributes.distance_value;
+        cfe.carbon_g__c = c.data.attributes.carbon_g;
+        cfe.carbon_lb__c = c.data.attributes.carbon_lb;
+        cfe.carbon_kg__c = c.attributes.carbon_kg;
+        cfe.carbon_mt__c = c.data.attributes.carbon_mt;
+        cfe.distance_value__c = c.data.attributes.distance_value;
+
+        System.debug('New CarbonFlightEstimate Record populated with deserialized values: ' + c);
         return cfe; 
     }	
-*/    
+*/
 
 }
 
