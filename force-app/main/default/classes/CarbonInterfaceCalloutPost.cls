@@ -17,21 +17,9 @@ public class CarbonInterfaceCalloutPost {
             System.debug('This is the response from Carbon Interface: ' + response.getBody());
         }
 
-        System.debug(CarbonInterfaceJsonDeserialize.parse(response.getBody()));
-    
-    }
+	    System.debug(CarbonInterfaceJsonDeserialize.parse(response.getBody()));
+//		CarbonFlightEstimate__c cfe = CarbonInterfaceJsonDeserialize.createRecord();
+//      insert cfe;
 
-    //    CarbonInterfaceJsonDeserialize deserializedresponse = CarbonInterfaceJsonDeserialize.parse(response.getBody());
-
-
-    // public static FlightEstResponse parse(String abc) {  
-    //     System.debug('abc: ' + abc);
-    //     FlightEstResponse deserializedResponse = (FlightEstResponse)JSON.deserialize(abc, FlightEstResponse.class);
-    //     System.debug('Deserialized date time: ' + deserializedResponse.data.attributes.estimated_at);
-    //     System.debug('Deserialized carbon grams: ' + deserializedResponse.data.attributes.carbon_g);
-    //     System.debug('Deserialized id: ' +deserializedResponse.data.id);
-    //     return deserializedResponse;
-    // }   
-
-
+	}
 }

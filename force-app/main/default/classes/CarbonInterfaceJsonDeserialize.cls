@@ -1,60 +1,98 @@
-/* V3: Not working yet... */
-// public with sharing class CarbonInterfaceJsonDeserialize {
+public class CarbonInterfaceJsonDeserialize {
     
-//     public class Data {
-//         String id;
-//         String type;
-//         Attributes attributes;
-//     }
-
-//     public class Attributes {
-//         Integer passengers;
-//         String estimated_at;
-//         Integer carbon_g;
-//         Integer carbon_lb;
-//         Integer carbon_kg;
-//         Integer carbon_mt;
-//         String distance_unit;
-//         Double distance_value;
-//     }
+    public Data data;
     
-//     public static CarbonInterfaceJsonDeserialize parse(String abc) {
-//         return (CarbonInterfaceJsonDeserialize) System.JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);
-//    }
-
-//    public static CarbonInterfaceJsonDeserialize parse(String abc) {
-//         CarbonInterfaceJsonDeserialize deserializedResponse = (CarbonInterfaceJsonDeserialize)JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);
-        
-//         System.debug('Deserialized date time: ' + deserializedResponse.data.attributes.estimated_at);
-//         System.debug('Deserialized carbon grams: ' + deserializedResponse.data.attributes.carbon_g);
-//         System.debug('Deserialized id: ' + deserializedResponse.data.id);
-        
-//         return (CarbonInterfaceJsonDeserialize) System.JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);  
-//     }    
-// }
-
-
-    /* V2: Tried this and the JSON response is being successfully passed. :D But returned deserialized values are null. D: Guessing it is having trouble deserializing becuase of the nested JSON objects. */
-    public with sharing class CarbonInterfaceJsonDeserialize {
-        public class FlightEstResponse{
-            String id;
-            Datetime estimated_at;
-            Integer carbon_g;
-            Integer carbon_lb;
-            Integer carbon_kg;
-            Integer carbon_mt;
-            Decimal distance_Value;
-        }   
-        public static FlightEstResponse parse(String abc) {  
-            System.debug('JSON Response that is passed into the parse method: ' + abc);
-            FlightEstResponse deserializedResponse = (FlightEstResponse)JSON.deserialize(abc, FlightEstResponse.class);
-    
-            System.debug('Deserialized date time: ' + deserializedResponse.estimated_at);
-            System.debug('Deserialized carbon grams: ' + deserializedResponse.carbon_g);
-            System.debug('Deserialized id: ' +deserializedResponse.id);
-            return deserializedResponse;
-        }
+    public class Data {
+        public String id;
+        public String type;
+        public Attributes attributes;
     }
+
+    public class Attributes {
+        public Integer passengers;
+        public List<Leg> legs;
+        public String estimated_at;
+        public Double carbon_g; //Initially this was integer, was not working.
+        public Double carbon_lb; //Initially this was integer, was not working.
+        public Double carbon_kg; //Initially this was integer, was not working.
+        public Double carbon_mt; //Initially this was integer, was not working.
+        public String distance_unit;
+        public Double distance_value; //Initially this was decimal, was not working.
+    }
+
+    	public class Leg {
+		public String departure_airport;
+		public String destination_airport;
+	}
+
+/*
+    public static CarbonInterfaceJsonDeserialize parse(String abc) {
+        System.debug('JSON Response that is passed into this method: ' + abc); 
+        return (CarbonInterfaceJsonDeserialize) System.JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class); 
+    }
+*/
+    
+/*    
+     public static CarbonInterfaceJsonDeserialize parse(String abc) {
+         CarbonInterfaceJsonDeserialize c = (CarbonInterfaceJsonDeserialize) System.JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);
+         return c;
+    }
+*/
+    
+   
+   public static CarbonInterfaceJsonDeserialize parse(String abc) {
+        //Check if JSON Response is successfully passed in.       
+        System.debug('JSON Response that is passed into this method: ' + abc); 
+
+        //Deserialize.
+        CarbonInterfaceJsonDeserialize deserializedResponse = (CarbonInterfaceJsonDeserialize)JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);
+       
+        //Pulling out individual values for each JSON identifier. 
+        System.debug('Deserialized date time: ' + deserializedResponse.data.attributes.estimated_at);
+        System.debug('Deserialized carbon grams: ' + deserializedResponse.data.attributes.carbon_g);
+        System.debug('Deserialized id: ' + deserializedResponse.data.id);
+       
+        return (CarbonInterfaceJsonDeserialize) System.JSON.deserialize(abc, CarbonInterfaceJsonDeserialize.class);  
+    }
+    
+/* 
+//Finish building sObject.
+    public static CarbonFlightEstimate__c createRecord(){
+		CarbonFlightEstimate__c cfe = new CarbonFlightEstimate__c;
+        cfe.carbon_g__c = deserializedResponse.data.attributes.carbon_g;
+        cfe.carbon_lb__c = deserializedResponse.data.attributes.carbon_lb;
+        cfe.carbon_kg__c = deserializedResponse.data.attributes.carbon_kg;
+        cfe.carbon_mt__c = deserializedResponse.data.attributes.carbon_mt;
+        cfe.distance_value__c = deserializedResponse.data.attributes.distance_value;
+        return cfe; 
+    }	
+*/    
+
+}
+
+
+
+    /* V2: Tried this and the JSON response is being successfully passed. :D But returned deserialized values are null. D: Guessing it is having trouble deserializing because of the nested JSON objects. */
+    // public with sharing class CarbonInterfaceJsonDeserialize {
+    //     public class FlightEstResponse{
+    //         String id;
+    //         Datetime estimated_at;
+    //         Integer carbon_g;
+    //         Integer carbon_lb;
+    //         Integer carbon_kg;
+    //         Integer carbon_mt;
+    //         Decimal distance_Value;
+    //     }   
+    //     public static FlightEstResponse parse(String abc) {  
+    //         System.debug('JSON Response that is passed into the parse method: ' + abc);
+    //         FlightEstResponse deserializedResponse = (FlightEstResponse)JSON.deserialize(abc, FlightEstResponse.class);
+    
+    //         System.debug('Deserialized date time: ' + deserializedResponse.estimated_at);
+    //         System.debug('Deserialized carbon grams: ' + deserializedResponse.carbon_g);
+    //         System.debug('Deserialized id: ' +deserializedResponse.id);
+    //         return deserializedResponse;
+    //     }
+    // }
 
     /* V1: Tried this and could not get it to work. */   
     //  public class FlightEstResponse{
