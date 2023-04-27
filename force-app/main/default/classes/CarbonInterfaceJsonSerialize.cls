@@ -1,8 +1,8 @@
-// First iteration of Request Builder. Does not work, because last method did not have a return.
+// This works!!
 // Used JSON Serialization Documentation Example as a template:
 // https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_json_json.htm
 
-public class JsonSerializeSample {
+public class CarbonInterfaceJsonSerialize {
   
     public class FlightEstRequest {
         String type;
@@ -14,7 +14,7 @@ public class JsonSerializeSample {
             type = 'flight';
             distance_unit = 'mi';
             passengers = p;
-            legs = new List<Object>();
+            legs = new List<Object>();   
             
             // Legs variable is populated using the following for loop.
             for (Integer x=0; x<iata.size()-1; x++) {
@@ -40,12 +40,14 @@ public class JsonSerializeSample {
    		}	
     }
     
-    public static void SerializeBody(Integer p, List<String> iata, Boolean roundTrip) {
+    public static String SerializeBody(Integer p, List<String> iata, Boolean roundTrip) {
         //Instantiate a new FlightEstRequest list to serialize.
         FlightEstRequest generatedRequest = new FlightEstRequest(p, iata, roundTrip);
 
         // Serialize the list of FlightEstRequest objects.
         String JSONString = JSON.serialize(generatedRequest);
         System.debug(JSONString);
+
+        return JSONString;
     }
 }
