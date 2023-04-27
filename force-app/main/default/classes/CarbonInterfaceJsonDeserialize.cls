@@ -40,14 +40,14 @@ public class CarbonInterfaceJsonDeserialize {
 
         //Populate new CarbonFlightEstimate record.
         CarbonFlightEstimate__c record = new CarbonFlightEstimate__c();
-            record.carbon_g__c = deserializedResponse.data.attributes.carbon_g;
-            record.carbon_lb__c = deserializedResponse.data.attributes.carbon_lb;
-            record.carbon_kg__c = deserializedResponse.data.attributes.carbon_kg;
-            record.carbon_mt__c = deserializedResponse.data.attributes.carbon_mt;
-            record.distance_value__c = deserializedResponse.data.attributes.distance_value;        
+        //     record.carbon_g__c = deserializedResponse.data.attributes.carbon_g;
+        //     record.carbon_lb__c = deserializedResponse.data.attributes.carbon_lb;
+        //     record.carbon_kg__c = deserializedResponse.data.attributes.carbon_kg;
+        //     record.carbon_mt__c = deserializedResponse.data.attributes.carbon_mt;
+        //     record.distance_value__c = deserializedResponse.data.attributes.distance_value;        
         
         System.debug('New CarbonFlightEstimate Record populated with deserialized values: ' + record);
-        return record;  
+        return null;  
     }
 }
 
