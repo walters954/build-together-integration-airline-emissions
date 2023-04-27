@@ -38,7 +38,7 @@ public class CarbonInterfaceJsonDeserialize {
         System.debug('Deserialized carbon grams: ' + deserializedResponse.data.attributes.carbon_g);
         System.debug('Deserialized id: ' + deserializedResponse.data.id);
 
-
+        //Populate new CarbonFlightEstimate record.
         CarbonFlightEstimate__c record = new CarbonFlightEstimate__c();
             record.carbon_g__c = deserializedResponse .data.attributes.carbon_g;
             record.carbon_lb__c = deserializedResponse .data.attributes.carbon_lb;
