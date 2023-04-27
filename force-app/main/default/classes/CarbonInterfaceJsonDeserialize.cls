@@ -33,22 +33,23 @@ public class CarbonInterfaceJsonDeserialize {
         //Deserialize.
         CarbonInterfaceJsonDeserialize deserializedResponse = (CarbonInterfaceJsonDeserialize)JSON.deserialize(jsonResponse, CarbonInterfaceJsonDeserialize.class);
        
-        //Check if can pull out individual values for each JSON identifier. 
+        //Check if individual values can be pulled for each JSON identifier. 
         System.debug('Deserialized date time: ' + deserializedResponse.data.attributes.estimated_at);
         System.debug('Deserialized carbon grams: ' + deserializedResponse.data.attributes.carbon_g);
         System.debug('Deserialized id: ' + deserializedResponse.data.id);
 
         //Populate new CarbonFlightEstimate record.
         CarbonFlightEstimate__c record = new CarbonFlightEstimate__c();
-            record.carbon_g__c = deserializedResponse .data.attributes.carbon_g;
-            record.carbon_lb__c = deserializedResponse .data.attributes.carbon_lb;
-            record.carbon_kg__c = deserializedResponse .data.attributes.carbon_kg;
-            record.carbon_mt__c = deserializedResponse .data.attributes.carbon_mt;
-            record.distance_value__c = deserializedResponse .data.attributes.distance_value;        
+            record.carbon_g__c = deserializedResponse.data.attributes.carbon_g;
+            record.carbon_lb__c = deserializedResponse.data.attributes.carbon_lb;
+            record.carbon_kg__c = deserializedResponse.data.attributes.carbon_kg;
+            record.carbon_mt__c = deserializedResponse.data.attributes.carbon_mt;
+            record.distance_value__c = deserializedResponse.data.attributes.distance_value;        
         
         System.debug('New CarbonFlightEstimate Record populated with deserialized values: ' + record);
         return record;  
     }
+}
 
 /*
 //V4.2 Attempting to populate sObject after deserialize method.
@@ -229,4 +230,3 @@ public class CarbonInterfaceJsonDeserialize {
 
     //     return ce;
     // }
-
