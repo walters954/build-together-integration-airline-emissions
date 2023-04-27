@@ -1,6 +1,5 @@
 // This works!!
 // Used JSON Serialization Documentation Example as a template:
-// https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_json_json.htm
 
 public class CarbonInterfaceJsonSerialize {
   
