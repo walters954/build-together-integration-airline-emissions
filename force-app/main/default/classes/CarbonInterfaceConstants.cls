@@ -8,4 +8,5 @@ public class CarbonInterfaceConstants {
     public static final String API_TOKEN_HEADER = 'Authorization';
     public static final String API_TOKEN_PREFIX = 'Bearer';
     public static final String FLIGHT_ESTIMATE_OBJECT_API_NAME = 'Flight_Estimate__c';
+
 }
