@@ -23,10 +23,6 @@ public class AirlineWrapper {
             this(departure_airport, destination_airport);
         }
 
-        private Boolean isLegValid() {
-            if(String.isBlank(this.departure_airport) || String.isBlank(this.destination))
-        }
-
     }
 
     public AirlineWrapper() {
