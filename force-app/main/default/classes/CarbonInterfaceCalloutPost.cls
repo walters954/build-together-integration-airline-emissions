@@ -16,10 +16,18 @@ public class CarbonInterfaceCalloutPost {
             System.debug('The status code returned was as expected: ' + response.getStatusCode() + ' ' + response.getStatus());
             System.debug('This is the response from Carbon Interface: ' + response.getBody());
         }
-
-	    System.debug(CarbonInterfaceJsonDeserialize.parse(response.getBody()));
-//		CarbonFlightEstimate__c cfe = CarbonInterfaceJsonDeserialize.populateRecord();
-//      insert cfe;
-
+        //Check if Json response body can be passed.
+        System.debug(CarbonInterfaceJsonDeserialize.parse(response.getBody()));
+        //Pass Json response body to this method.
+        CarbonFlightEstimate__c cfe = CarbonInterfaceJsonDeserialize.parse(response.getBody());
+        //Check if record was received.
+        System.debug(cfe);
+        //Insert new record and check for DML execution or error.
+        try {
+            insert cfe;
+            System.debug('DML was executed x number of times: ' + Limits.getDMLRows());
+        } catch (DmlException e) {
+            System.debug('A DML exception has occurred: ' + e.getMessage());
+        }
 	}
 }
