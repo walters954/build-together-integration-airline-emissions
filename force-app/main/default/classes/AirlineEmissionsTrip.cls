@@ -7,6 +7,7 @@
 
 
 public class AirlineEmissionsTrip {
+    public static String idToReturnToFlow;
 
     public static void createAteeObject(List<String> airportCodes, String legsToDisplay, Boolean roundtrip, CarbonResponseWrapper response) {
         Airline_Trip_Emissions_Estimate__c currentATEE = new Airline_Trip_Emissions_Estimate__c();
@@ -41,5 +42,7 @@ public class AirlineEmissionsTrip {
         currentATEE.CO2e_mt__c           = response.data.attributes.carbon_mt;
 
         Insert currentATEE;
+
+        idToReturnToFlow = currentATEE.Id;
     }
 }

@@ -12,7 +12,8 @@ global class CarbonRequestSender {
     static final String TOKEN = '3jeEa9IauqaGb0ZDTsxw';
 
     @InvocableMethod(label='sendCarbonInterfaceRequest' callout=true)
-    public static void prepareRequest(List<makeCarbonInterfaceRequest> requests){
+    public static List<makeCarbonInterfaceResult> prepareRequest(List<makeCarbonInterfaceRequest> requests){
+        List<makeCarbonInterfaceResult> results = new List<makeCarbonInterfaceResult>();
 
         for (makeCarbonInterfaceRequest request : requests){
             airportCodes = request.airports;
@@ -23,9 +24,31 @@ global class CarbonRequestSender {
             wrapper.distance_unit  = 'mi';
             wrapper.legs           = processLegs(airportCodes, returnTrip);
 
+            // This starts a daisy-chain of method calls that results in a new ATEE record
             sendRequest(wrapper);
-
+            
+            // Capture and return the Id of the new ATTE record back to the flow
+            makeCarbonInterfaceResult newResult = new makeCarbonInterfaceResult();
+            newResult.newRecordId = AirlineEmissionsTrip.idToReturnToFlow;
+            results.add(newResult);
         }
+        return results;
+    }
+
+    global class makeCarbonInterfaceRequest {
+        @InvocableVariable (required=true)
+        global Decimal passengers;
+
+        @InvocableVariable (required=true)
+        global List<String> airports;
+
+        @InvocableVariable (required=true)
+        global Boolean roundtrip;
+    }
+
+    global class makeCarbonInterfaceResult {
+        @InvocableVariable
+        global String newRecordId;
     }
 
     public static List<CarbonBodyWrapper.Leg> processLegs(List<String> airports, Boolean roundtrip){
@@ -50,17 +73,6 @@ global class CarbonRequestSender {
             }
         }
         return legs;
-    }
-
-    global class makeCarbonInterfaceRequest {
-        @InvocableVariable (required=true)
-        global Decimal passengers;
-
-        @InvocableVariable (required=true)
-        global List<String> airports;
-
-        @InvocableVariable (required=true)
-        global Boolean roundtrip;
     }
 
 
