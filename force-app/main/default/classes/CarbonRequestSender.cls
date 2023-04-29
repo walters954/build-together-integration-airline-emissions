@@ -27,7 +27,7 @@ global class CarbonRequestSender {
             // This starts a daisy-chain of method calls that results in a new ATEE record
             sendRequest(wrapper);
             
-            // Capture and return the Id of the new ATTE record back to the flow
+            // Capture and return the Id of the new ATEE record back to the flow
             makeCarbonInterfaceResult newResult = new makeCarbonInterfaceResult();
             newResult.newRecordId = AirlineEmissionsTrip.idToReturnToFlow;
             results.add(newResult);
