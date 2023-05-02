@@ -5,14 +5,13 @@
 public class CarbonInterfaceRequestWrapper {
 
 
-    public String type;
-    public Integer passengers;
-    public List<Leg> legs;
-    public String distance_unit;
+    public class Legs {
+		public String departure_airport;
+		public String destination_airport;
+	}
 
-    public class Leg {
-        public String departure_airport;
-        public String destination_airport;
-
-    }
+	public String type;
+	public Integer passengers;
+	public List<Legs> legs;
+    
 }
