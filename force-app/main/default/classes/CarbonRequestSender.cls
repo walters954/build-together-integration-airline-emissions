@@ -2,14 +2,15 @@
 // April 2023
 // Build Together Integration 4
 // Carbon Interface API - Airline Emissions
-// Team 2: team-EMEA
+// code by Neil Hohmann
 // 
 
 global class CarbonRequestSender {
     static List<String> airportCodes = new List<String>();
     static Boolean returnTrip;
-    static String displayLegs = ''; // displays legs in page layout (UI)
+    public static String displayLegs = ''; // displays legs in page layout (UI)
     static final String TOKEN = '3jeEa9IauqaGb0ZDTsxw';
+
 
     @InvocableMethod(label='sendCarbonInterfaceRequest' callout=true)
     public static List<makeCarbonInterfaceResult> prepareRequest(List<makeCarbonInterfaceRequest> requests){
