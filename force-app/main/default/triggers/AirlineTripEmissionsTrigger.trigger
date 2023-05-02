@@ -5,11 +5,11 @@
 // code by Neil Hohmann
 // 
 
-trigger AirlineTripEmissionsTrigger on Airline_Trip_Emissions_Estimate__c (before insert) {
+trigger AirlineTripEmissionsTrigger on Airline_Trip_Emissions_Estimate__c (after insert) {
     
-    if (Trigger.isBefore) {
+    if (Trigger.isAfter) {
         if (Trigger.isInsert) {
-            AirlineTripEmissionsTriggerHandler.beforeInsert(Trigger.new);
+            AirlineTripEmissionsTriggerHandler.afterInsert(Trigger.new);
         }
     }
 }

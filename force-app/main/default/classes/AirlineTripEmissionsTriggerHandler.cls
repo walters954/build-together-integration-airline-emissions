@@ -8,15 +8,18 @@
 public with sharing class AirlineTripEmissionsTriggerHandler {
     public static List<Airline_Trip_Emissions_Estimate__c> ATEEsToProcess = new List<Airline_Trip_Emissions_Estimate__c>();
     public static List<String> airportCodes = new List<String>();
+    public static String wrapperJson;
+    public static String displayLegs;
+    public static String idToPass;
 
-    public static void beforeInsert(List<Airline_Trip_Emissions_Estimate__c> newATEEs){
+    public static void afterInsert(List<Airline_Trip_Emissions_Estimate__c> newATEEs){
         for(Airline_Trip_Emissions_Estimate__c newATEE : newATEEs){
             if(String.isEmpty(newATEE.Transaction_ID__c) && newATEE.Request_Date_Time__c == null){
                 ATEEsToProcess.add(newATEE);
             }
         }
+
         if (ATEEsToProcess.size() > 0){
-            // Here I'm not passing ATEEsToProcess since I assume it will already be accessible in prepareCallout()
             for(Airline_Trip_Emissions_Estimate__c nextATEE : ATEEsToProcess){
                 defineAirports(nextATEE);
                 createWrapper(nextATEE);
@@ -41,6 +44,88 @@ public with sharing class AirlineTripEmissionsTriggerHandler {
         wrapper.legs          = CarbonRequestSender.processLegs(airportCodes, nextATEE.Round_Trip__c);
         wrapper.distance_unit = 'mi';
         System.debug('wrapper: ' + wrapper);
-        System.debug('Legs: ' + CarbonRequestSender.displayLegs);
+        displayLegs           = CarbonRequestSender.displayLegs;
+        System.debug('Legs: ' + displayLegs);
+
+        // Need to serialize now since @future method will not accept wrapper class as parameter
+        wrapperJson = JSON.serialize(wrapper);
+        System.debug('wrapperJson: ' + wrapperJson);
+        // Create list of Strings to pass to @future method
+        // To include (1) Id of nextATEE, (2) displayLegs, (3) wrapperJson
+        List<String> requestParameters = new List<String>();
+        requestParameters.add(nextATEE.Id);
+        requestParameters.add(displayLegs);
+        requestParameters.add(wrapperJson);
+
+        sendRequest(requestParameters);
     }
+
+    @future (callout=true)
+    public static void sendRequest(List<String> requestParameters){ // Can only pass primitive type w/@future method
+        idToPass    = requestParameters.get(0);
+        displayLegs = requestParameters.get(1);
+        String body = requestParameters.get(2);
+        
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://www.carboninterface.com/api/v1/estimates');
+        request.setHeader ('Authorization', 'Bearer ' + '3jeEa9IauqaGb0ZDTsxw');
+        request.setMethod ('POST');
+        request.setHeader ('Content-Type', 'application/json');
+        request.setBody(body);
+         
+        // Create HTTP & HttpResponse objects and send the request
+        Http httpCallout = new Http();
+        HttpResponse response = httpCallout.send(request);
+
+        System.debug('response: ' + response);
+        System.debug('Response body: ' + response.getBody());
+        
+        // Pass response to processResponse method
+        processResponse(response);
+    }
+
+    public static void processResponse(HttpResponse response){
+
+        //System.debug('Response body: ' + response.getBody());
+        // Deserialize the response using the parse method of the CarbonResponseWrapper class
+        CarbonResponseWrapper carbonBodyResponse = CarbonResponseWrapper.parse(response.getBody());
+        
+        // Process & print data to output console
+        String dateRun      = carbonBodyResponse.data.attributes.estimated_at;
+        String distanceUnit = carbonBodyResponse.data.attributes.distance_unit;
+
+        System.debug('>>>>> Carbon Interface API - Flight Emission Estimates');
+        System.debug('>>>>> Transaction Id: '       + carbonBodyResponse.data.id);
+        System.debug('>>>>> Request Date/Time: '    + Datetime.valueOf(dateRun.replace('T',' ')).addHours(2).format());
+        System.debug('>>>>> Number of Passengers: ' + carbonBodyResponse.data.attributes.passengers);
+        System.debug('>>>>> Number of legs: '       + carbonBodyResponse.data.attributes.legs.size());
+        System.debug('>>>>> Legs: '                 + displayLegs);
+        System.debug('>>>>> Total distance (' + distanceUnit + '): ' + CarbonBodyResponse.data.attributes.distance_value);
+        System.debug('>>>>> CO2e lb: ' + carbonBodyResponse.data.attributes.carbon_lb);
+        System.debug('>>>>> CO2e kg: ' + carbonBodyResponse.data.attributes.carbon_kg);
+        System.debug('>>>>> CO2e mt: ' + carbonBodyResponse.data.attributes.carbon_mt);
+        
+        System.debug('>>>>> idToPass: ' + idToPass);
+
+        updateAtee(carbonBodyResponse);
+    }
+
+    public static void updateAtee(CarbonResponseWrapper carbonBodyResponse){
+        Airline_Trip_Emissions_Estimate__c atee = [SELECT Id
+                                                     FROM Airline_Trip_Emissions_Estimate__c
+                                                    WHERE Id = :idToPass];
+
+        atee.Number_of_Legs__c    = carbonBodyResponse.data.attributes.legs.size();
+        atee.Legs__c              = displayLegs;
+        atee.Request_Date_Time__c = Datetime.valueOf(carbonBodyResponse.data.attributes.estimated_at.replace('T',' ')).addHours(2);
+        atee.Transaction_ID__c    = carbonBodyResponse.data.id;
+        atee.Flight_Distance__c   = carbonBodyResponse.data.attributes.distance_value;
+        atee.Distance_Unit__c     = carbonBodyResponse.data.attributes.distance_unit;
+        atee.CO2e_lb__c           = carbonBodyResponse.data.attributes.carbon_lb;
+        atee.CO2e_kg__c           = carbonBodyResponse.data.attributes.carbon_kg;
+        atee.CO2e_mt__c           = carbonBodyResponse.data.attributes.carbon_mt;
+
+        Update atee;
+    }
+
 }
