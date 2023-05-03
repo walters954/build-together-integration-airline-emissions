@@ -4,7 +4,7 @@
 //
 
 public class CarbonInterfaceResponseWrapper{
-
+    public Data data;
 	public class Data {
         public String id;
         public String type;
@@ -27,7 +27,7 @@ public class CarbonInterfaceResponseWrapper{
         public String departure_airport;
         public String destination_airport;
     }
-    public List<Data> data;
+   
 
 public static CarbonInterfaceResponseWrapper parse(String json) {
 	return (CarbonInterfaceResponseWrapper) System.JSON.deserialize(json, CarbonInterfaceResponseWrapper.class);
