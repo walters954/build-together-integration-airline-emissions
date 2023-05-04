@@ -6,11 +6,11 @@
 // 
 
 public with sharing class AirlineTripEmissionsTriggerHandler {
-    public static List<Airline_Trip_Emissions_Estimate__c> ATEEsToProcess = new List<Airline_Trip_Emissions_Estimate__c>();
-    public static List<String> airportCodes = new List<String>();
-    public static String wrapperJson;
-    public static String displayLegs;
-    public static String idToPass;
+    static List<Airline_Trip_Emissions_Estimate__c> ATEEsToProcess = new List<Airline_Trip_Emissions_Estimate__c>();
+    static List<String> airportCodes = new List<String>();
+    static String wrapperJson;
+    static String displayLegs;
+    static String idToPass;
 
     public static void afterInsert(List<Airline_Trip_Emissions_Estimate__c> newATEEs){
         for(Airline_Trip_Emissions_Estimate__c newATEE : newATEEs){
@@ -39,17 +39,19 @@ public with sharing class AirlineTripEmissionsTriggerHandler {
 
     public static void createWrapper(Airline_Trip_Emissions_Estimate__c nextATEE){
         CarbonBodyWrapper wrapper = new CarbonBodyWrapper();
+        // Assign fields to newly initialized wrapper
         wrapper.type          = 'flight';
         wrapper.passengers    = nextATEE.Number_of_Passengers__c.intValue();
         wrapper.legs          = CarbonRequestSender.processLegs(airportCodes, nextATEE.Round_Trip__c);
         wrapper.distance_unit = 'mi';
-        System.debug('wrapper: ' + wrapper);
-        displayLegs           = CarbonRequestSender.displayLegs;
-        System.debug('Legs: ' + displayLegs);
+ 
+        // Create displayLegs that will be passed to @future method
+        displayLegs = CarbonRequestSender.displayLegs;
 
-        // Need to serialize now since @future method will not accept wrapper class as parameter
+        // Need to serialize now since @future method will not accept wrapper class as parameter.
+        // Instead. we will pass the JSON file as a String.
         wrapperJson = JSON.serialize(wrapper);
-        System.debug('wrapperJson: ' + wrapperJson);
+
         // Create list of Strings to pass to @future method
         // To include (1) Id of nextATEE, (2) displayLegs, (3) wrapperJson
         List<String> requestParameters = new List<String>();
@@ -62,6 +64,7 @@ public with sharing class AirlineTripEmissionsTriggerHandler {
 
     @future (callout=true)
     public static void sendRequest(List<String> requestParameters){ // Can only pass primitive type w/@future method
+        // Parse the parameter List to get the information passed (now in new async transaction)
         idToPass    = requestParameters.get(0);
         displayLegs = requestParameters.get(1);
         String body = requestParameters.get(2);
@@ -76,9 +79,6 @@ public with sharing class AirlineTripEmissionsTriggerHandler {
         // Create HTTP & HttpResponse objects and send the request
         Http httpCallout = new Http();
         HttpResponse response = httpCallout.send(request);
-
-        System.debug('response: ' + response);
-        System.debug('Response body: ' + response.getBody());
         
         // Pass response to processResponse method
         processResponse(response);
@@ -86,7 +86,6 @@ public with sharing class AirlineTripEmissionsTriggerHandler {
 
     public static void processResponse(HttpResponse response){
 
-        //System.debug('Response body: ' + response.getBody());
         // Deserialize the response using the parse method of the CarbonResponseWrapper class
         CarbonResponseWrapper carbonBodyResponse = CarbonResponseWrapper.parse(response.getBody());
         
@@ -111,10 +110,12 @@ public with sharing class AirlineTripEmissionsTriggerHandler {
     }
 
     public static void updateAtee(CarbonResponseWrapper carbonBodyResponse){
+        // Use SOQL query to pull nextATEE record to update
         Airline_Trip_Emissions_Estimate__c atee = [SELECT Id
                                                      FROM Airline_Trip_Emissions_Estimate__c
                                                     WHERE Id = :idToPass];
 
+        // Populate fields to update
         atee.Number_of_Legs__c    = carbonBodyResponse.data.attributes.legs.size();
         atee.Legs__c              = displayLegs;
         atee.Request_Date_Time__c = Datetime.valueOf(carbonBodyResponse.data.attributes.estimated_at.replace('T',' ')).addHours(2);
@@ -125,7 +126,7 @@ public with sharing class AirlineTripEmissionsTriggerHandler {
         atee.CO2e_kg__c           = carbonBodyResponse.data.attributes.carbon_kg;
         atee.CO2e_mt__c           = carbonBodyResponse.data.attributes.carbon_mt;
 
-        Update atee;
+        Update atee; //I feel like I should have bulkified this async @future transaction -- right?
     }
 
 }
