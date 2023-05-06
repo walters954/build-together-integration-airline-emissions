@@ -1,16 +1,12 @@
 public class CarbonWrapperClass {
+	public String type;
+	public Integer passengers;
+	public List<Leg> legs;
+	public String distance_unit;
 
-	public class Legs {
+	public class Leg {
 		public String departure_airport;
 		public String destination_airport;
 	}
 
-	public String type;
-	public Integer passengers;
-	public List<Legs> legs;
-
-	
-	public static CarbonWrapperClass parse(String json) {
-		return (CarbonWrapperClass) System.JSON.deserialize(json, CarbonWrapperClass.class);
-	}
 }
